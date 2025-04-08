@@ -31,8 +31,8 @@ services:
     volumes:
       - app-storage:/var/www/storage
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
-      - /etc/ssl/certs/seudominio.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-      - /etc/ssl/certs/seudominio.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     networks:
       - portifolio-network
     depends_on:
