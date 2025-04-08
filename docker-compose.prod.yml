@@ -26,7 +26,7 @@ services:
     container_name: portifolio-nginx
     restart: always
     ports:
-      - "80:80"
+      - "81:80"
       - "443:443"
     volumes:
       - app-storage:/var/www/storage
