@@ -1,18 +1,18 @@
 services:
   # Aplicação Laravel
   app:
-    image: ${DOCKER_USERNAME}/portifolio-app:latest  # Use uma imagem pré-construída
+    image: sergio72/portifolio-app:latest  # Substitua "seu_usuario_docker" pelo seu username real do Docker Hub
     container_name: portifolio-app
-    restart: always  # Garante que o serviço será reiniciado automaticamente
+    restart: always
     working_dir: /var/www
     volumes:
-      - app-storage:/var/www/storage  # Apenas volume para storage
+      - app-storage:/var/www/storage
     networks:
       - portifolio-network
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_URL=https://seudominio.com
+      - APP_URL=${APP_URL:-https://projetosdev.com}
       - DB_CONNECTION=mysql
       - DB_HOST=db
       - DB_PORT=3306
@@ -27,11 +27,12 @@ services:
     restart: always
     ports:
       - "80:80"
-      - "443:443"  # Porta HTTPS
+      - "443:443"
     volumes:
-      - app-storage:/var/www/storage  # Compartilhar storage com app
+      - app-storage:/var/www/storage
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
-      - ./docker/nginx/ssl:/etc/nginx/ssl/  # Certificados SSL
+      - /etc/ssl/certs/seudominio.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/ssl/certs/seudominio.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     networks:
       - portifolio-network
     depends_on:
