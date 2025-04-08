@@ -1,0 +1,63 @@
+services:
+  # Aplicação Laravel
+  app:
+    image: ${DOCKER_USERNAME}/portifolio-app:latest  # Use uma imagem pré-construída
+    container_name: portifolio-app
+    restart: always  # Garante que o serviço será reiniciado automaticamente
+    working_dir: /var/www
+    volumes:
+      - app-storage:/var/www/storage  # Apenas volume para storage
+    networks:
+      - portifolio-network
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://seudominio.com
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: portifolio-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"  # Porta HTTPS
+    volumes:
+      - app-storage:/var/www/storage  # Compartilhar storage com app
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+      - ./docker/nginx/ssl:/etc/nginx/ssl/  # Certificados SSL
+    networks:
+      - portifolio-network
+    depends_on:
+      - app
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: portifolio-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - portifolio-network
+
+networks:
+  portifolio-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
+  app-storage:
+    driver: local
