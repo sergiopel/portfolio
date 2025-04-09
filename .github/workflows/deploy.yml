@@ -77,6 +77,13 @@ jobs:
             # Exportar a variável também no ambiente SSH
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             
+            # Renomear o arquivo de configuração do Nginx
+            if [ -f "docker/nginx/conf.d/app.prod.conf" ]; then
+              rm -f docker/nginx/conf.d/default.conf  # Remove o arquivo de desenvolvimento
+              mv docker/nginx/conf.d/app.prod.conf docker/nginx/conf.d/default.conf
+              echo "Nginx configuration renamed from app.prod.conf to default.conf"
+            fi
+            
             # Parar e remover containers anteriores
             docker compose -f docker-compose.prod.yml down
             
@@ -92,6 +99,16 @@ jobs:
             # Executar migrações e otimizações
             docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force || echo "Migration command failed but continuing"
             docker compose -f docker-compose.prod.yml exec -T app php artisan storage:link || echo "Storage link command failed but continuing"
+            
+            # Montar os certificados SSL do sistema no container Nginx (se necessário)
+            if [ -f "/etc/letsencrypt/live/projetosdev.com/fullchain.pem" ]; then
+              echo "Copying SSL certificates to container..."
+              docker cp /etc/letsencrypt/live/projetosdev.com/fullchain.pem portifolio-nginx:/etc/nginx/ssl/fullchain.pem
+              docker cp /etc/letsencrypt/live/projetosdev.com/privkey.pem portifolio-nginx:/etc/nginx/ssl/privkey.pem
+              docker exec portifolio-nginx sh -c "chmod 644 /etc/nginx/ssl/fullchain.pem && chmod 600 /etc/nginx/ssl/privkey.pem"
+              docker exec portifolio-nginx nginx -s reload
+              echo "SSL certificates mounted and Nginx reloaded"
+            fi
             
             # Verificar status dos containers
             docker compose -f docker-compose.prod.yml ps
