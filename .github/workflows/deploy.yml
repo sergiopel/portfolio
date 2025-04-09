@@ -101,18 +101,20 @@ jobs:
             docker compose -f docker-compose.prod.yml exec -T app php artisan storage:link || echo "Storage link command failed but continuing"
             
             # Montar os certificados SSL do sistema no container Nginx
+
             if [ -f "/etc/letsencrypt/live/projetosdev.com/fullchain.pem" ]; then
               echo "Copying SSL certificates to container..."
-              # Criar o diretório SSL no contêiner antes de copiar
+              # Criar o diretório SSL no contêiner
               docker exec portfolio-nginx mkdir -p /etc/nginx/ssl
-              # Agora copiar os certificados
-              docker cp /etc/letsencrypt/live/projetosdev.com/fullchain.pem portfolio-nginx:/etc/nginx/ssl/fullchain.pem
-              docker cp /etc/letsencrypt/live/projetosdev.com/privkey.pem portfolio-nginx:/etc/nginx/ssl/privkey.pem
+              
+              # Copiar os arquivos reais (não os symlinks)
+              docker cp $(readlink -f /etc/letsencrypt/live/projetosdev.com/fullchain.pem) portfolio-nginx:/etc/nginx/ssl/fullchain.pem
+              docker cp $(readlink -f /etc/letsencrypt/live/projetosdev.com/privkey.pem) portfolio-nginx:/etc/nginx/ssl/privkey.pem
+              
               docker exec portfolio-nginx sh -c "chmod 644 /etc/nginx/ssl/fullchain.pem && chmod 600 /etc/nginx/ssl/privkey.pem"
               docker exec portfolio-nginx nginx -s reload
               echo "SSL certificates mounted and Nginx reloaded"
-            fi
-            
+            fi            
             # Verificar status dos containers
             docker compose -f docker-compose.prod.yml ps
             
