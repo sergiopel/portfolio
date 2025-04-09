@@ -27,8 +27,8 @@ jobs:
           context: .
           file: ./Dockerfile.prod
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/portifolio-app:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/portifolio-app:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/portfolio-app:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/portfolio-app:latest
           cache-to: type=inline
 
       # Substituir DOCKER_USERNAME no docker-compose.prod.yml antes de copiar
@@ -61,7 +61,7 @@ jobs:
           password: ${{ secrets.HOSTINGER_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           source: "docker-compose.prod.yml,.env.production,docker/nginx/conf.d/,docker/scripts/backup.sh"
-          target: "/home/${{ secrets.HOSTINGER_USERNAME }}/portifolio"
+          target: "/home/${{ secrets.HOSTINGER_USERNAME }}/portfolio"
           
       - name: Deploy to Hostinger
         uses: appleboy/ssh-action@master
@@ -71,7 +71,7 @@ jobs:
           password: ${{ secrets.HOSTINGER_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/${{ secrets.HOSTINGER_USERNAME }}/portifolio
+            cd /home/${{ secrets.HOSTINGER_USERNAME }}/portfolio
             cp .env.production .env
             
             # Exportar a variável também no ambiente SSH
@@ -91,7 +91,7 @@ jobs:
             docker image prune -af
             
             # Baixar a imagem atualizada
-            docker pull ${{ secrets.DOCKER_USERNAME }}/portifolio-app:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-app:latest
             
             # Iniciar os containers com a nova configuração
             docker compose -f docker-compose.prod.yml up -d
@@ -103,10 +103,10 @@ jobs:
             # Montar os certificados SSL do sistema no container Nginx (se necessário)
             if [ -f "/etc/letsencrypt/live/projetosdev.com/fullchain.pem" ]; then
               echo "Copying SSL certificates to container..."
-              docker cp /etc/letsencrypt/live/projetosdev.com/fullchain.pem portifolio-nginx:/etc/nginx/ssl/fullchain.pem
-              docker cp /etc/letsencrypt/live/projetosdev.com/privkey.pem portifolio-nginx:/etc/nginx/ssl/privkey.pem
-              docker exec portifolio-nginx sh -c "chmod 644 /etc/nginx/ssl/fullchain.pem && chmod 600 /etc/nginx/ssl/privkey.pem"
-              docker exec portifolio-nginx nginx -s reload
+              docker cp /etc/letsencrypt/live/projetosdev.com/fullchain.pem portfolio-nginx:/etc/nginx/ssl/fullchain.pem
+              docker cp /etc/letsencrypt/live/projetosdev.com/privkey.pem portfolio-nginx:/etc/nginx/ssl/privkey.pem
+              docker exec portfolio-nginx sh -c "chmod 644 /etc/nginx/ssl/fullchain.pem && chmod 600 /etc/nginx/ssl/privkey.pem"
+              docker exec portfolio-nginx nginx -s reload
               echo "SSL certificates mounted and Nginx reloaded"
             fi
             
