@@ -28,7 +28,7 @@ services:
     container_name: portfolio-nginx
     restart: always
     ports:
-      - "81:80"
+      - "80:80"
     #  - "444:443"
     volumes:
       - app-storage:/var/www/storage
