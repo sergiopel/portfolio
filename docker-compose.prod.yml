@@ -1,7 +1,7 @@
 services:
-  # Aplicação Laravel Portfolio
+  # Aplicação Laravel
   app:
-    image: sergio72/portfolio-app:latest
+    image: sergio72/portfolio-app:latest  # Substitua "seu_usuario_docker" pelo seu username real do Docker Hub
     container_name: portfolio-app
     restart: always
     working_dir: /var/www
@@ -23,7 +23,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
 
-  # Nginx Service (único para ambos os apps)
+  # Nginx Service
   nginx:
     image: nginx:alpine
     container_name: portfolio-nginx
@@ -41,9 +41,8 @@ services:
       - portfolio-network
     depends_on:
       - app
-      - controle-gastos-app
 
-  # MySQL Service Portfolio
+  # MySQL Service
   db:
     image: mysql:8.0
     container_name: portfolio-db
@@ -58,45 +57,6 @@ services:
     networks:
       - portfolio-network
 
-  # Aplicação Controle de Gastos
-  controle-gastos-app:
-    image: sergio72/controle-gastos-app:latest
-    container_name: controle-gastos-app
-    restart: always
-    working_dir: /var/www
-    volumes:
-      - controle-gastos-files:/var/www/
-      - ./controle-gastos/.env:/var/www/.env
-    command: >
-      sh -c "sed -i 's/listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/g' /usr/local/etc/php-fpm.d/www.conf && php-fpm"
-    networks:
-      - portfolio-network
-    environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
-      - APP_URL=${CONTROLE_GASTOS_URL:-https://controle-gastos.projetosdev.com}
-      - DB_CONNECTION=mysql
-      - DB_HOST=controle-gastos-db
-      - DB_PORT=3306
-      - DB_DATABASE=${CONTROLE_GASTOS_DB_DATABASE}
-      - DB_USERNAME=${CONTROLE_GASTOS_DB_USERNAME}
-      - DB_PASSWORD=${CONTROLE_GASTOS_DB_PASSWORD}
-
-  # MySQL Service Controle de Gastos
-  controle-gastos-db:
-    image: mysql:8.0
-    container_name: controle-gastos-db
-    restart: always
-    environment:
-      MYSQL_DATABASE: ${CONTROLE_GASTOS_DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${CONTROLE_GASTOS_DB_PASSWORD}
-      MYSQL_PASSWORD: ${CONTROLE_GASTOS_DB_PASSWORD}
-      MYSQL_USER: ${CONTROLE_GASTOS_DB_USERNAME}
-    volumes:
-      - controle-gastos-dbdata:/var/lib/mysql
-    networks:
-      - portfolio-network
-
 networks:
   portfolio-network:
     driver: bridge
@@ -106,78 +66,3 @@ volumes:
     driver: local
   app-files:
     driver: local
-  controle-gastos-dbdata:
-    driver: local
-  controle-gastos-files:
-    driver: local
-
-
-
-# services:
-#   # Aplicação Laravel
-#   app:
-#     image: sergio72/portfolio-app:latest  # Substitua "seu_usuario_docker" pelo seu username real do Docker Hub
-#     container_name: portfolio-app
-#     restart: always
-#     working_dir: /var/www
-#     volumes:
-#       - app-files:/var/www/
-#       - ./.env:/var/www/.env
-#     command: >
-#       sh -c "sed -i 's/listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/g' /usr/local/etc/php-fpm.d/www.conf && php-fpm"  
-#     networks:
-#       - portfolio-network
-#     environment:
-#       - APP_ENV=production
-#       - APP_DEBUG=false
-#       - APP_URL=${APP_URL:-https://projetosdev.com}
-#       - DB_CONNECTION=mysql
-#       - DB_HOST=db
-#       - DB_PORT=3306
-#       - DB_DATABASE=${DB_DATABASE}
-#       - DB_USERNAME=${DB_USERNAME}
-#       - DB_PASSWORD=${DB_PASSWORD}
-
-#   # Nginx Service
-#   nginx:
-#     image: nginx:alpine
-#     container_name: portfolio-nginx
-#     restart: always
-#     ports:
-#       - "80:80"
-#       - "443:443"
-#     volumes:
-#       - app-files:/var/www/
-#       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
-#       - ./docker/nginx/ssl:/etc/nginx/ssl
-#       - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-#       - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
-#     networks:
-#       - portfolio-network
-#     depends_on:
-#       - app
-
-#   # MySQL Service
-#   db:
-#     image: mysql:8.0
-#     container_name: portfolio-db
-#     restart: always
-#     environment:
-#       MYSQL_DATABASE: ${DB_DATABASE}
-#       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-#       MYSQL_PASSWORD: ${DB_PASSWORD}
-#       MYSQL_USER: ${DB_USERNAME}
-#     volumes:
-#       - dbdata:/var/lib/mysql
-#     networks:
-#       - portfolio-network
-
-# networks:
-#   portfolio-network:
-#     driver: bridge
-
-# volumes:
-#   dbdata:
-#     driver: local
-#   app-files:
-#     driver: local
