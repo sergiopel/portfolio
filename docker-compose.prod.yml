@@ -6,7 +6,7 @@ services:
     restart: always
     working_dir: /var/www
     volumes:
-      - app-storage:/var/www/storage
+      - app-files:/var/www/
     command: >
       sh -c "sed -i 's/listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/g' /usr/local/etc/php-fpm.d/www.conf && php-fpm"  
     networks:
@@ -31,7 +31,7 @@ services:
       - "80:80"
     #  - "444:443"
     volumes:
-      - app-storage:/var/www/storage
+      - app-files:/var/www/
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
     #  - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
     #  - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
@@ -62,5 +62,5 @@ networks:
 volumes:
   dbdata:
     driver: local
-  app-storage:
+  app-files:
     driver: local
