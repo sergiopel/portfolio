@@ -52,6 +52,11 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.production
           # Adicionar também o DOCKER_USERNAME no .env (redundância para garantir)
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env.production
+          # Adicionar também o CONTROLE_GASTOS_URL no .env
+          echo "CONTROLE_GASTOS_URL=${{ secrets.CONTROLE_GASTOS_URL }}" >> .env.production
+          echo "CONTROLE_GASTOS_DB_DATABASE=${{ secrets.CONTROLE_GASTOS_DB_DATABASE }}" >> .env.production
+          echo "CONTROLE_GASTOS_DB_USERNAME=${{ secrets.CONTROLE_GASTOS_DB_USERNAME }}" >> .env.production
+          echo "CONTROLE_GASTOS_DB_PASSWORD=${{ secrets.CONTROLE_GASTOS_DB_PASSWORD }}" >> .env.production
 
       - name: Copy files to Hostinger via SSH
         uses: appleboy/scp-action@master
