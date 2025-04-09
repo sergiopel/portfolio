@@ -29,12 +29,12 @@ services:
     restart: always
     ports:
       - "81:80"
-      - "444:443"
+    #  - "444:443"
     volumes:
       - app-storage:/var/www/storage
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
-      - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-      - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+    #  - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+    #  - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     networks:
       - portfolio-network
     depends_on:
