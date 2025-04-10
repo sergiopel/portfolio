@@ -433,7 +433,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "docker-compose.prod.yml,.env.production,docker/nginx/conf.d/,docker/scripts/backup.sh"
           target: "/home/${{ secrets.HOSTINGER_USERNAME }}/portfolio"
-          
+
       - name: Deploy to Hostinger
         uses: appleboy/ssh-action@master
         with:
@@ -444,57 +444,80 @@ jobs:
           script: |
             cd /home/${{ secrets.HOSTINGER_USERNAME }}/portfolio
             cp .env.production .env
-            
+
             # Renomear o arquivo de configuração do Nginx
             if [ -f "docker/nginx/conf.d/app.prod.conf" ]; then
               rm -f docker/nginx/conf.d/default.conf 2>/dev/null || true
               cp docker/nginx/conf.d/app.prod.conf docker/nginx/conf.d/default.conf
               echo "Nginx configuration copied from app.prod.conf to default.conf"
             fi
-            
+
             # Criar a rede se não existir
             docker network inspect app-network >/dev/null 2>&1 || docker network create app-network
-            
+
             # Parar e remover containers anteriores
+            echo "Stopping existing portfolio containers..."
             docker compose -f docker-compose.prod.yml down
-            
+
+            # !!! === MODIFICAÇÃO AQUI === !!!
+            # Remover o volume nomeado que contém o código/assets antigos.
+            # Verifique o nome exato com 'docker volume ls' no servidor.
+            # Geralmente é <nome_diretorio>_app-files (ex: portfolio_app-files)
+            echo "Removing old app-files volume to ensure fresh code..."
+            docker volume rm portfolio_app-files -f || docker volume rm app-files -f || echo "Volume app-files (or prefixed) not found or already removed."
+            # !!! === FIM DA MODIFICAÇÃO === !!!
+
             # Remover imagens antigas (opcional)
+            echo "Pruning old Docker images..."
             docker image prune -af
-            
+
             # Baixar a imagem atualizada
+            echo "Pulling latest application image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/portfolio-app:latest
-            
+
             # Iniciar os containers do portfolio
+            echo "Starting new portfolio containers..."
             docker compose -f docker-compose.prod.yml up -d
-            
+
             # Aguardar um pouco para garantir que os containers do portfolio estejam prontos
             echo "Waiting for portfolio containers to start up..."
             sleep 10
-            
-            # Reiniciar o proxy-reverso para usar a nova configuração
+
+            # Reiniciar o proxy-reverso para usar a nova configuração (SE NECESSÁRIO)
+            # Se o proxy reverso não mudar, talvez não precise reiniciar sempre.
+            echo "Restarting reverse-proxy containers..."
             cd /home/${{ secrets.HOSTINGER_USERNAME }}/proxy-reverso
             docker compose down
             docker compose up -d
-            
+
             # Voltar ao diretório do portfolio para executar comandos adicionais
             cd /home/${{ secrets.HOSTINGER_USERNAME }}/portfolio
-            
-            # Executar migrações e otimizações
-            docker exec portfolio-app php artisan migrate --force
-            docker exec portfolio-app php artisan storage:link || echo "Storage link command failed but continuing"
-            
-            # Limpar caches da aplicação
-            docker exec portfolio-app php artisan cache:clear
-            docker exec portfolio-app php artisan config:clear
-            docker exec portfolio-app php artisan view:clear
-            docker exec portfolio-app php artisan route:clear
-            
+
+            # Verificar se o container da aplicação está rodando antes de executar comandos nele
+            if [ "$( docker ps -q -f name=portfolio-app )" ]; then
+              echo "Running database migrations..."
+              docker exec portfolio-app php artisan migrate --force
+
+              echo "Linking storage..."
+              docker exec portfolio-app php artisan storage:link || echo "Storage link command failed but continuing"
+
+              echo "Clearing application caches..."
+              docker exec portfolio-app php artisan optimize:clear
+              # Usar optimize:clear é geralmente suficiente em produção após o deploy
+              # docker exec portfolio-app php artisan cache:clear
+              # docker exec portfolio-app php artisan config:clear
+              # docker exec portfolio-app php artisan view:clear
+              # docker exec portfolio-app php artisan route:clear
+            else
+              echo "ERROR: portfolio-app container is not running. Skipping artisan commands."
+            fi
+
             # Verificar status dos containers
-            echo "Portfolio containers:"
+            echo "Portfolio containers status:"
             docker compose -f docker-compose.prod.yml ps
-            
-            echo "Proxy containers:"
+
+            echo "Proxy containers status:"
             cd /home/${{ secrets.HOSTINGER_USERNAME }}/proxy-reverso
             docker compose ps
-            
-            echo "Portfolio deployment completed successfully!"
+
+            echo "Portfolio deployment completed!"
