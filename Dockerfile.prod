@@ -38,6 +38,14 @@ RUN composer install --optimize-autoloader --no-dev
 # Compilar assets
 RUN npm ci && npm run build
 
+# --- !!! ADICIONAR ESTA SEÇÃO !!! ---
+# Ajustar permissões para www-data (usuário padrão do PHP-FPM e comum para Nginx)
+# Garante que tanto o PHP quanto o Nginx (via volume) possam acessar
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/public # <-- Adicione a mudança de dono para public
+
+# --- !!! FIM DA SEÇÃO ADICIONADA !!! ---
+
 # Configurar permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
