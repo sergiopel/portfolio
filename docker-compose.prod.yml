@@ -24,23 +24,23 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
 
   # Nginx Service
-  nginx:
-    image: nginx:alpine
-    container_name: portfolio-nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - app-files:/var/www/
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d/
-      - ./docker/nginx/ssl:/etc/nginx/ssl
-      - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
-      - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
-    networks:
-      - portfolio-network
-    depends_on:
-      - app
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: portfolio-nginx
+  #   restart: always
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - app-files:/var/www/
+  #     - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+  #     - ./docker/nginx/ssl:/etc/nginx/ssl
+  #     - /etc/letsencrypt/live/projetosdev.com/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+  #     - /etc/letsencrypt/live/projetosdev.com/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+  #   networks:
+  #     - portfolio-network
+  #   depends_on:
+  #     - app
 
   # MySQL Service
   db:
