@@ -23,6 +23,19 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
 
+# Nginx Service (Intermediário)
+  nginx:
+    image: nginx:alpine
+    container_name: portfolio-nginx
+    restart: always
+    volumes:
+      - app-files:/var/www/
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+    networks:
+      - app-network
+    depends_on:
+      - app
+
   # Nginx Service
   # nginx:
   #   image: nginx:alpine

@@ -324,7 +324,7 @@ jobs:
           username: ${{ secrets.HOSTINGER_USERNAME }}
           password: ${{ secrets.HOSTINGER_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "docker-compose.prod.yml,.env.production,docker/scripts/backup.sh"
+          source: "docker-compose.prod.yml,.env.production,docker/nginx/conf.d/,docker/scripts/backup.sh"
           target: "/home/${{ secrets.HOSTINGER_USERNAME }}/portfolio"
           
       - name: Deploy to Hostinger
