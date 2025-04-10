@@ -414,6 +414,7 @@ jobs:
           echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env.production
           echo "APP_DEBUG=false" >> .env.production
           echo "APP_URL=${{ secrets.APP_URL }}" >> .env.production
+          echo "ASSET_URL=${{ secrets.APP_URL }}" >> .env.production
           echo "DB_CONNECTION=mysql" >> .env.production
           echo "DB_HOST=portfolio-db" >> .env.production
           echo "DB_PORT=3306" >> .env.production
