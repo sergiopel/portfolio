@@ -19,12 +19,18 @@ class TrustProxies extends Middleware
      *
      * @var int
      */
-    protected $headers = Request::HEADER_X_FORWARDED_ALL;
+    protected $headers = Request::HEADER_X_FORWARDED_FOR |
+        Request::HEADER_X_FORWARDED_HOST |
+        Request::HEADER_X_FORWARDED_PORT |
+        Request::HEADER_X_FORWARDED_PROTO;
 
     public function __construct()
     {
         $this->proxies = config('trustedproxy.proxies');
-        $this->headers = config('trustedproxy.headers', Request::HEADER_X_FORWARDED_ALL);
+        $this->headers = config('trustedproxy.headers', Request::HEADER_X_FORWARDED_FOR |
+            Request::HEADER_X_FORWARDED_HOST |
+            Request::HEADER_X_FORWARDED_PORT |
+            Request::HEADER_X_FORWARDED_PROTO);
     }
 }
 
