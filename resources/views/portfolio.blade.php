@@ -10,7 +10,7 @@
     <!-- Navbar -->
     <nav class="fixed w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-md z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">MeuPortfólio</a>
+            <a href="#" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">Meu Portfólio</a>
             <div class="flex items-center space-x-6">
                 <a href="#sobre" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Sobre</a>
                 <a href="#projetos" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">Projetos</a>
