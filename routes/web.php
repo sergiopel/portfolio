@@ -5,26 +5,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $projects = [
         [
-            'title' => 'Sistema de Gestão',
-            'description' => 'Um sistema completo para gerenciamento de tarefas e projetos.',
-            'tags' => ['Laravel', 'Vue.js', 'Tailwind CSS'],
-            'image' => 'https://via.placeholder.com/400x225',
-            'link' => '#'
+            'title' => 'Sistema de Gestão de Gastos',
+            'description' => 'Um sistema monolítico para gerenciamento de finanças pessoais.',
+            'tags' => ['Laravel', 'Bootstrap', 'Mysql'],
+            'github' => 'https://github.com/sergiopel/controle-de-gastos',
+            'image' => 'images/controle-de-gastos.png',
+            'link' => 'https://controle-gastos.projetosdev.com'
         ],
         [
-            'title' => 'E-commerce',
-            'description' => 'Loja online com carrinho de compras e pagamento integrado.',
-            'tags' => ['React', 'Node.js', 'MongoDB'],
-            'image' => 'https://via.placeholder.com/400x225',
-            'link' => '#'
+            'title' => 'Consultório Dentário',
+            'description' => 'Um sistema monolítico para consultório dentário.',
+            'tags' => ['Laravel', 'Vue', 'Vuetify', 'Inertia', 'Mysql'],
+            'github' => null,
+            'image' => 'images/dental_manager_em_construcao.png',
+            'link' => null
         ],
-        [
-            'title' => 'App de Tarefas',
-            'description' => 'Aplicativo para gerenciamento de tarefas diárias.',
-            'tags' => ['Flutter', 'Firebase'],
-            'image' => 'https://via.placeholder.com/400x225',
-            'link' => '#'
-        ]
     ];
     return view('portfolio', compact('projects'));
 });
