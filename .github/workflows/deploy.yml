@@ -423,6 +423,13 @@ jobs:
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env.production
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env.production
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env.production
+          echo "MAIL_MAILER=smtp" >> .env.production
+          echo "MAIL_HOST=smtp.gmail.com" >> .env.production
+          echo "MAIL_PORT=587" >> .env.production
+          echo "MAIL_USERNAME=serpel@gmail.com" >> .env.production
+          echo "MAIL_PASSWORD=${{ secrets.SENHA_APP_GMAIL }}" >> .env.production
+          echo "MAIL_ENCRYPTION=tls" >> .env.production
+          echo "MAIL_FROM_ADDRESS=serpel@gmail.com" >> .env.production
 
       - name: Copy files to Hostinger via SSH
         uses: appleboy/scp-action@master

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {
     $projects = [
@@ -23,3 +24,5 @@ Route::get('/', function () {
     ];
     return view('portfolio', compact('projects'));
 });
+
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');

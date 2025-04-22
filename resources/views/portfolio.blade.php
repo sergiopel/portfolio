@@ -210,17 +210,23 @@
     <section id="contato" class="py-16 px-4 bg-white dark:bg-gray-800">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">Entre em Contato</h2>
-            <form class="max-w-lg mx-auto">
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+            <form action="{{ route('contact.send') }}#contato" method="POST" class="max-w-lg mx-auto">
+                @csrf
                 <div class="mb-4">
-                    <input type="text" placeholder="Seu Nome"
+                    <input type="text" name="name" placeholder="Seu Nome" required
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div class="mb-4">
-                    <input type="email" placeholder="Seu E-mail"
+                    <input type="email" name="email" placeholder="Seu E-mail" required
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div class="mb-4">
-                    <textarea placeholder="Sua Mensagem" rows="4"
+                    <textarea name="message" placeholder="Sua Mensagem" rows="4" required
                         class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                 </div>
                 <button type="submit"
