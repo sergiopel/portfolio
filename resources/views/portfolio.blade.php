@@ -169,7 +169,7 @@
     <section id="projetos" class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-12">Meus Projetos</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
                 @foreach ($projects as $project)
                     <div
                         class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
@@ -197,6 +197,9 @@
                                 @if (isset($project['link']))
                                     <a href="{{ $project['link'] }}" target="_blank"
                                         class="text-indigo-600 dark:text-indigo-400 hover:underline">Ver Projeto →</a>
+                                @endif
+                                @if (isset($project['acesso']))
+                                    <p class="text-gray-600 dark:text-gray-300">Acesso: {{ $project['acesso'] }}</p>
                                 @endif
                             </div>
                         </div>
